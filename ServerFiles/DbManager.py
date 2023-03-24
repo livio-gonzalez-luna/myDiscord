@@ -1,5 +1,7 @@
 import mysql.connector
 
+
+
 DISCORD_CLONE = mysql.connector.connect(
     host = "localhost",
     user = "root",
@@ -11,6 +13,14 @@ DISCORD_CLONE = mysql.connector.connect(
 DB_CURSOR = DISCORD_CLONE.cursor(buffered=True)
 
 
+
+
+
+
+
+
+
+
 class CRUD:
     def __init__(self, cursor, tableName:str):
         self.__cursor = cursor
@@ -19,6 +29,7 @@ class CRUD:
             self.__currentTable = tableName
 
         self.__tableColumns = self.__GetColumns()
+
 
 
 

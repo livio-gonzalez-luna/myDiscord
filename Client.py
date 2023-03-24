@@ -1,4 +1,4 @@
-import socket, pyaudio, threading
+import socket, pyaudio, json
 
 
 
@@ -18,25 +18,55 @@ class Client:
 
 
 
+
     """Public methods"""
 
 
-    def ClientLogin(self, credentials:tuple):
-        return None
+    def ClientLogin(self, credentials:dict):
+        userCredentials = self.__DataFormatting(credentials)
+        print(userCredentials, type(userCredentials))
+        
+        self.__client.sendall(userCredentials)
+
+        #self.__client.recv(1024)
     
 
 
-    def Post(self, msg:str):
-        post = msg.encode(self.__FORMAT)
-        dataLength = len(post)
+    def MessagePost(self, msg:str):
+        userMessage, messageData = self.__DataFormatting(msg)
 
-        postData = str(dataLength).encode(self.__FORMAT)
-        postData += b' ' * (self.__HEADER - len(postData))
+        self.__client.send(messageData)
+        self.__client.send(userMessage)
 
-        self.__client.send(postData)
-        self.__client.send(post)
+        #self.__client.recv(1024)
 
 
     
-    def NewUser(self):
-        return None
+    def NewUser(self, newCredentials:dict):
+        newUser = self.__DataFormatting(newCredentials)
+
+        self.__client.send(newUser)
+        
+        #self.__client.recv(1024)
+    
+
+
+
+    """Private methods"""
+
+
+    def __DataFormatting(self, dataToFormat:str|dict):
+        if isinstance(dataToFormat, str):
+            data = dataToFormat.encode(self.__FORMAT)
+            dataLength = len(data)
+
+            formattedData = str(dataLength).encode(self.__FORMAT)
+            formattedData += b' ' * (self.__HEADER - len(formattedData))
+
+            return data, formattedData
+
+
+        elif isinstance(dataToFormat, dict):
+            jsonDict = json.dumps(dataToFormat)
+
+            return jsonDict.encode(self.__FORMAT)

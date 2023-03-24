@@ -1,6 +1,6 @@
 from DbManager import *
 from threading import *
-import socket, pyaudio
+import socket, pyaudio, json
 
 
 
@@ -15,7 +15,7 @@ class Server:
         self.__PORT = 5050
         self.__HEADER = 64
         self.__FORMAT = "utf-8"
-        self.__DISCONNECTION_SIGNAL = "DISCONNECT"
+        self.__DISCONNECTION_SIGNAL = "!DISCONNECT"
 
         self.__server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -36,6 +36,7 @@ class Server:
 
 
 
+
     """Public methods"""
 
 
@@ -45,7 +46,6 @@ class Server:
 
         while True:
             clientSocket, clientIP = self.__server.accept()
-            print(clientSocket, clientIP)
 
             thread = Thread(target=self.__ThreadedClient, args=(clientSocket, clientIP))
             thread.start()
@@ -57,21 +57,36 @@ class Server:
 
 
     def __ThreadedClient(self, socket:socket, ip):
-        print(f"{ip} Connected")
         clientConnected = True
 
-        while clientConnected:
-            clientData = socket.recv(self.__HEADER).decode(self.__FORMAT)
+        def DataHandling(rawData:bytes):
+            global clientConnected
 
-            if clientData:
-                clientData = int(clientData)
-                data = socket.recv(clientData).decode(self.__FORMAT)
+            if rawData and "{" not in rawData:
+                rawData = int(rawData)
+                data = socket.recv(rawData).decode(self.__FORMAT)
 
                 if data == self.__DISCONNECTION_SIGNAL:
+                    print(f"[{ip}]: DISCONNECTED")
                     clientConnected = False
 
                 print(f"[{ip}]: {data}")
 
+
+            elif rawData and "{" in rawData:
+                data = rawData.replace("'", "\"")
+                jsonData = json.loads(data)
+
+                self.__LoginCheck(jsonData)
+
+
+            else:
+                clientConnected = False
+
+
+        while clientConnected:
+            clientData = socket.recv(self.__HEADER).decode(self.__FORMAT)
+            DataHandling(clientData)
 
         socket.close()
 
@@ -84,6 +99,11 @@ class Server:
 
     def __LoginCheck(self):
         return None
+    
+
+
+    def __NewAccount(self):
+        return None
 
 
 
@@ -95,3 +115,7 @@ class Server:
 if __name__ == "__main__":
     server = Server()
     server.Run()
+
+
+
+
