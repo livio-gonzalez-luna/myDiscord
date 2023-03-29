@@ -5,20 +5,12 @@ import mysql.connector
 DISCORD_CLONE = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "sqlroot",
-    database = "",
+    password = "root",
+    database = "myDiscord",
     autocommit = True
 )
 
 DB_CURSOR = DISCORD_CLONE.cursor(buffered=True)
-
-
-
-
-
-
-
-
 
 
 class CRUD:

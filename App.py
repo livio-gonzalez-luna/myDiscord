@@ -5,8 +5,6 @@ from pathlib import *
 from PIL import Image
 import customtkinter as ctk
 
-
-
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("dark-blue")
 
@@ -41,7 +39,7 @@ class App(ctk.CTk):
         self.__Pages = {"Login":self.__loginPage, "Main":self.__mainPage}
         self.PageSwitch("Login")
 
-    
+
 
 
 
@@ -66,7 +64,7 @@ class App(ctk.CTk):
 
 
 
-    
+
     """Private methods"""
 
 
@@ -75,10 +73,6 @@ class App(ctk.CTk):
             if page != activePage:
                 self.__Pages[page].forget()
     
-
-
-
-
 
 
 
@@ -111,12 +105,13 @@ class LoginPage(ctk.CTkFrame):
 
 
 
+
     """Public methods"""
 
 
     def Login(self):        
         self.__appClient = Client()
-        self.__appClient.MessagePost("!DISCONNECT")
+        #self.__appClient.MessagePost("!DISCONNECT")
         self.__LoginBox()
         
         if self.__loginCheck:
@@ -125,8 +120,8 @@ class LoginPage(ctk.CTkFrame):
 
 
 
-    """Private methods"""
 
+    """Private methods"""
 
     def __LoginBox(self):
         self.__loginCheck = False
@@ -166,17 +161,13 @@ class LoginPage(ctk.CTkFrame):
     def __CredentialCheck(self, credentials:tuple, mode:str):
         if mode == "Login":
             userCredentials = {"Username":credentials[0], "Password":credentials[1]}
-            self.__loginCheck = self.__appClient.ClientLogin(userCredentials)
+            self.__loginCheck = self.__appClient.ServerQuery(mode, userCredentials)
 
         else:
             newCredentials = {"Username":credentials[0], "First Name":credentials[1], "Last Name":credentials[2], "Email":credentials[3], "Password":credentials[4]}
-            self.__loginCheck = self.__appClient.NewUser(newCredentials)
-
-        
+            self.__loginCheck = self.__appClient.ServerQuery(mode, newCredentials)
 
 
-            
-    
 
 
 
@@ -200,12 +191,11 @@ class MainPage(ctk.CTkFrame):
 
     """Public methods"""
 
+
     """Sets the current client"""
     def SetAppClient(self, client:Client):
         self.__client = client
     
-
-
     def Main(self):
         self.__ServerSelection()
         self.__RoomSelection()
@@ -213,7 +203,7 @@ class MainPage(ctk.CTkFrame):
 
 
 
-    
+
     """Private methods"""
 
 
@@ -224,12 +214,9 @@ class MainPage(ctk.CTkFrame):
         self.navigation_frame_label = ctk.CTkLabel(self.__serversFrame, text="  Create server", compound="left", font=ctk.CTkFont(size=15, weight="bold"))
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
 
-
     def __RoomSelection(self):
         self.__roomsServerFrame = ctk.CTkFrame(self, corner_radius=0).grid(row=0, column=1, sticky="nsew")
     
-
-
     def __RoomMessages(self):
         self.__messagesFrame = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.__messagesFrame.grid(row=0, column=2, sticky="nsew")
@@ -242,22 +229,10 @@ class MainPage(ctk.CTkFrame):
 
     """Connection handling"""
 
-
     def __Disconnect(self):
         self.__client.MessagePost("!DISCONNECT")
         self.__APP.PageSwitch("Login")
     
-
-
-
-
-
-
-
-
-
-
-
 
 
 
