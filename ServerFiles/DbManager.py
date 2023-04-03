@@ -5,7 +5,7 @@ import mysql.connector
 DISCORD_CLONE = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "root",
+    password = "sqlroot",
     database = "myDiscord",
     autocommit = True
 )

@@ -40,6 +40,16 @@ class Client:
         
         else:
             self.__SigningIn(type, data)
+
+
+
+    def ServerListener(self):
+        serverBroadcast = self.__client.recv(self.__HEADER)
+
+        if serverBroadcast:
+            data = serverBroadcast.replace("'", "\"")
+            message = json.loads(data)
+            return message
     
 
 
@@ -52,7 +62,7 @@ class Client:
         credentialsFormatted = json.dumps(credentials).encode(self.__FORMAT)
 
         self.__client.sendall(credentialsFormatted)
-        credentialsResult = self.__client.recv(1024)
+        credentialsResult = self.__client.recv(self.__HEADER)
         print(credentialsResult)
     
 
@@ -62,7 +72,7 @@ class Client:
         messageFormatted = json.dumps(userMessage).encode(self.__FORMAT)
 
         self.__client.sendall(messageFormatted)
-        messageResult = self.__client.recv(1024)
+        messageResult = self.__client.recv(self.__HEADER)
    
 
 
