@@ -1,10 +1,12 @@
 import mysql.connector
 
+
+
 DISCORD_CLONE = mysql.connector.connect(
     host = "localhost",
     user = "root",
     password = "sqlroot",
-    database = "",
+    database = "myDiscord",
     autocommit = True
 )
 
@@ -19,6 +21,7 @@ class CRUD:
             self.__currentTable = tableName
 
         self.__tableColumns = self.__GetColumns()
+
 
 
 
